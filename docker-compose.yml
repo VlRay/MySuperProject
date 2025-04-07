@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  userservice:
+    build:
+      context: ./src/UserService
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    environment:
+      - ConnectionStrings__Postgres=Host=postgres;Database=usersdb;Username=postgres;Password=Password123
+
+  projectservice:
+    build:
+      context: ./src/ProjectService
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mongo
+    environment:
+      - Mongo__ConnectionString=mongodb://mongo:27017
+      - Mongo__Database=projectsdb
+      - UserService__BaseUrl=http://userservice:8080/api
+      - ASPNETCORE_URLS=http://+:8080
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password123
+      POSTGRES_DB: usersdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./src/UserService/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - ./src/ProjectService/Data/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+volumes:
+  pgdata:
+  mongodata:
