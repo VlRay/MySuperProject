@@ -35,3 +35,10 @@ This project was created as a test task to demonstrate knowledge of clean archit
 - Unit and integration tests  
 - Swagger enabled for both services  
 - Custom endpoint:
+
+---
+
+## Useful Endpoints
+
+- UserService Swagger: [http://localhost:8081/swagger]
+- ProjectService Swagger: [http://localhost:8082/swagger]
